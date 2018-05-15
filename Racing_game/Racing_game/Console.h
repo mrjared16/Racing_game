@@ -1,4 +1,6 @@
-#include <windows.h>
+#pragma once
+#include <Windows.h>
+
 void gotoXY(int column, int line)
 {
 	COORD coord;
@@ -18,12 +20,8 @@ void ShowConsoleCursor(bool showFlag)
 	SetConsoleCursorInfo(out, &cursorInfo);
 }
 
-int random(int start, int end)
-{
-	return start + rand() % (end + 1 - start);
-}
 
-//12 = LIGHTRED, 15 = WHITE -----> this.colorit(12); this.colorit(15);
+//12 = LIGHTRED, 15 = WHITE -----> this.setColor(12); this.setColor(15);
 //0 = BLACK, 1 = BLUE
 //2 = GREEN, 3 = CYAN
 //4 = RED, 5 MAGNETA
@@ -31,3 +29,10 @@ int random(int start, int end)
 //8 = DARKGRAY, 9 = LIGHTBLUE
 //10 = LIGHTGREEN, 11 = LIGHTCYAN
 //13 = LIGHTMAGENTA, 14 = YELLOW
+
+
+void setColor(unsigned short col)
+{
+	HANDLE hstdout = GetStdHandle(STD_OUTPUT_HANDLE);
+	SetConsoleTextAttribute(hstdout, col);
+}

@@ -143,11 +143,22 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="function.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="function.h" />
+    <ClInclude Include="AI.h" />
+    <ClInclude Include="Barrier.h" />
+    <ClInclude Include="Bullet.h" />
+    <ClInclude Include="Car.h" />
+    <ClInclude Include="Coin.h" />
+    <ClInclude Include="Console.h" />
+    <ClInclude Include="Diem.h" />
+    <ClInclude Include="Functions.h" />
+    <ClInclude Include="Guide.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="res\Guide.txt" />
+    <Text Include="res\HighScores.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
