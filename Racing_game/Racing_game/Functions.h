@@ -14,12 +14,13 @@ extern void play(bool auto_play = false);
 #define CHIEU_RONG 30
 #define CHIEU_DAI 25
 
+#define RED 4
+#define YELLOW 6
+#define WHITE 15
 #define LIGHT_RED 12
 #define LIGHT_GREEN 10
 #define LIGHT_CYAN 11
-#define WHITE 15
-#define RED 4
-#define YELLOW 14
+#define LIGHT_YELLOW 14
 
 #define MAX_PLAYER_NAME 26
 

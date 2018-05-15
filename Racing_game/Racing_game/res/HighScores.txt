@@ -1,5 +1,5 @@
+phuc,64
+phuc,29
 a,10
 g,5
-a,2
-phuc,2
 a,2

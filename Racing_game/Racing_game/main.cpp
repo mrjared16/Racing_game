@@ -22,6 +22,7 @@ std::list <Barrier> list_vc;		//dslk dùng để lưu các vật cản
 int dan;	//so vien dan co the ban
 std::list <Bullet> list_dan;		//nhung vien dan da duoc ban ra
 
+std::list <Coin> list_coin;		
 
 //Khoi tao lai xe, vat can, dan, diem, map
 void khoiTao()
@@ -29,6 +30,7 @@ void khoiTao()
 	srand(time(NULL));
 	list_vc.clear();
 	list_dan.clear();
+	list_coin.clear();
 
 	diem = 0;
 	dan = 0;
@@ -50,6 +52,7 @@ void khoiTao()
 void gameOver() {
 	list_vc.clear();	// tranh memory leak
 	list_dan.clear();	// tranh memory leak
+	list_coin.clear();	// tranh memory leak
 
 	//In "game over".
 	gotoXY(CHIEU_RONG + 6, CHIEU_DAI / 2);
@@ -154,6 +157,8 @@ bool updateTrangThai()
 	
 	updateBullets(list_dan, list_vc, car, dan);		//dan
 
+	updateCoins(list_coin, car, diem);
+
 	//dieu kien tam thoi de test
 	if (dieuKienSinhBullet(diem) && dan <= diem / 3)
 	{
@@ -174,9 +179,9 @@ void show()
 	drawBarriersOnBuffer(list_vc, map, RED);
 	
 	//ve dan
-	drawBulletsOnBuffer(list_dan, map, YELLOW);
+	drawBulletsOnBuffer(list_dan, map, LIGHT_YELLOW);
 
-
+	drawCoinsOnBuffer(list_coin, map, YELLOW);
 
 	// Vẽ khung cho map.
 	for (int i = 0; i < CHIEU_DAI; i++)

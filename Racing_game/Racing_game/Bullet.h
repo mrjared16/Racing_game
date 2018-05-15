@@ -56,6 +56,7 @@ bool updateBullet(Bullet &bullet)
 		return false;
 
 	bullet.td.y--;			//di chuyen len
+	return true;
 }
 
 //Ham sinh ra dan (tren man hinh)
@@ -81,7 +82,7 @@ bool updateBullets(std::list<Bullet> &list_dan, std::list<Barrier> &list_barrier
 	
 	for (cursor = list_dan.begin(); cursor != list_dan.end();)
 		{
-		//di chuyen vat can, tra ve false khi vat can ra khoi ngoai man hinh => remove vat can
+		//di chuyen dan, tra ve false khi dan ra khoi ngoai man hinh => remove dan
 		//kiem tra vat can co cham vat can khong, tra ve true khi va cham & doi hinh dang vat can
 		if (!updateBullet(*cursor) || checkVaChamBullet(*cursor, list_barrier)) {
 			cursor = list_dan.erase(cursor);
