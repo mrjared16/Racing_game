@@ -11,12 +11,12 @@ void khoiTaoBullet(Bullet &new_bullet, Car &car)
 	new_bullet.td.y = car.td.y - 3;
 }
 
-//Dieu kien de sau nay su dung
-bool dieuKienSinhBullet(int diem)
+/*//Dieu kien de sau nay su dung
+bool dieuKienSinhBullet(unsigned int diem)
 {
 	//co the la an item hoac la duoc so diem cu the
 	return (diem % 10 == 5);	//tam thoi de test
-}
+}*/
 
 //Kiem tra va cham giua dan va vat can
 bool bulletVaChamBarrier(Bullet &dan, Barrier &barrier)

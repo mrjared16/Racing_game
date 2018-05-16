@@ -1,5 +1,5 @@
-phuc,64
-phuc,29
-a,10
-g,5
-a,2
+jh,80
+hj,74
+jhk,52
+hjk,51
+Player1,0

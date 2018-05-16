@@ -150,7 +150,7 @@
     <ClInclude Include="Barrier.h" />
     <ClInclude Include="Bullet.h" />
     <ClInclude Include="Car.h" />
-    <ClInclude Include="Coin.h" />
+    <ClInclude Include="Item.h" />
     <ClInclude Include="Console.h" />
     <ClInclude Include="Diem.h" />
     <ClInclude Include="Functions.h" />

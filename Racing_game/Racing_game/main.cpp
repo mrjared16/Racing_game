@@ -7,7 +7,7 @@
 #include "Car.h"
 #include "Barrier.h"
 #include "Bullet.h"
-#include "Coin.h"
+#include "Item.h"
 #include "AI.h"
 
 Cell map[CHIEU_DAI][CHIEU_RONG];
@@ -15,14 +15,14 @@ Cell map[CHIEU_DAI][CHIEU_RONG];
 Car car;
 //Barrier vc5;
 
-int diem;
+unsigned int diem;
 
 std::list <Barrier> list_vc;		//dslk dùng để lưu các vật cản
 
 int dan;	//so vien dan co the ban
 std::list <Bullet> list_dan;		//nhung vien dan da duoc ban ra
 
-std::list <Coin> list_coin;		
+std::list <Item> list_item;		
 
 //Khoi tao lai xe, vat can, dan, diem, map
 void khoiTao()
@@ -30,7 +30,7 @@ void khoiTao()
 	srand(time(NULL));
 	list_vc.clear();
 	list_dan.clear();
-	list_coin.clear();
+	list_item.clear();
 
 	diem = 0;
 	dan = 0;
@@ -52,7 +52,7 @@ void khoiTao()
 void gameOver() {
 	list_vc.clear();	// tranh memory leak
 	list_dan.clear();	// tranh memory leak
-	list_coin.clear();	// tranh memory leak
+	list_item.clear();	// tranh memory leak
 
 	//In "game over".
 	gotoXY(CHIEU_RONG + 6, CHIEU_DAI / 2);
@@ -66,7 +66,7 @@ void gameOver() {
 
 	Record player;		//lưu tên và điểm người đangg chơi.
 						//lấy tên người chơi
-	printf("Your score: %d\n", diem);
+	printf("Your score: %u\n", diem);
 	printf("Player name: ");
 
 	//doc ten player
@@ -152,18 +152,9 @@ bool updateTrangThai()
 	if (!updateBarriers(list_vc, car, diem))		//=> updateBarriers false khi vat can va cham vao xe 
 		return false;							//=> game over
 
-	//updateCoin(list_tien,)
-	//updateItem(list_item,)
-	
 	updateBullets(list_dan, list_vc, car, dan);		//dan
 
-	updateCoins(list_coin, car, diem);
-
-	//dieu kien tam thoi de test
-	if (dieuKienSinhBullet(diem) && dan <= diem / 3)
-	{
-		dan += diem;
-	}
+	updateItems(list_item, car, diem, dan);			//	item
 
 	
 	return true;
@@ -181,7 +172,7 @@ void show()
 	//ve dan
 	drawBulletsOnBuffer(list_dan, map, LIGHT_YELLOW);
 
-	drawCoinsOnBuffer(list_coin, map, YELLOW);
+	drawItemsOnBuffer(list_item, map, YELLOW);
 
 	// Vẽ khung cho map.
 	for (int i = 0; i < CHIEU_DAI; i++)
@@ -207,7 +198,7 @@ void show()
 	}
 
 	gotoXY(CHIEU_RONG + 1, 0);
-	printf("Score: %2d", diem);
+	printf("Score: %2u", diem);
 	gotoXY(CHIEU_RONG + 1, 1);
 	printf("Bullet: %2d", dan);
 }
@@ -229,9 +220,9 @@ void play(bool auto_play)
 		
 		show();
 
-		DWORD sleep_time = 100 - 1.5 * diem;
-		if (sleep_time < 0)
-			sleep_time = 0;
+		long sleep_time = 100 - 1.5 * diem;	//tam thoi, sau nay se thay doi theo lv
+		if (sleep_time < 10)
+			sleep_time = 10;
 
 		Sleep(sleep_time);
 	}
@@ -248,21 +239,3 @@ int main()
 	return 0;
 }
 
-/*bool xacsuatratien()
-{
-	//chưa dùng đến.
-	srand(time(NULL));
-	int x = random(2, 300);
-	if (x <= CHIEU_RONG - 3 && t.td.y>CHIEU_DAI)
-	{
-		t.td.x = x;
-		t.td.y = -1;
-		return true;
-	}
-	return false;
-}
-
-
-
-
-*/

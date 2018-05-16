@@ -3,7 +3,8 @@
 
 #define NORMAL 0
 #define GOT_SHOT 1
-#define MAX_BARRIER 4
+
+#define MAX_BARRIER 8
 
 //Ham tao hinh dang vat can
 void setBarrierAppearance(Barrier &vc)
@@ -56,11 +57,11 @@ void barrierGenerator(std::list <Barrier> &listvc)
 		listvc.push_back(vc_new);
 		return;
 	}
-
-	int i = random(0, 5);
+	int barrier_rate = 50;	//50%, tam thoi, sau nay se thay doi theo level
+	bool ra_vatcan = chance(barrier_rate);
 
 	//cần update để tránh hiện tượng trùng, && listvc.front().td.y>1chỉ là biện pháp tạm thời.
-	if (listvc.size() < MAX_BARRIER && i == 2 && listvc.back().td.y > 1 && listvc.front().td.y > 1)
+	if (listvc.size() < MAX_BARRIER && ra_vatcan && listvc.back().td.y > 1 && listvc.front().td.y > 1)
 	{
 		khoiTaoBarrier(vc_new);
 		listvc.push_back(vc_new);
@@ -73,13 +74,20 @@ void barrierGenerator(std::list <Barrier> &listvc)
 
 //Ham update trang thai, vi tri vat can
 //Tra ve false neu vat can RA KHOI MAP hoac TRUNG DAN=> remove
-bool updateBarrier(Barrier &vc, Car &car, int &diem)
+//Dua vao vat can de tinh diem
+//1 diem neu vat can bi huy
+bool updateBarrier(Barrier &vc, Car &car, unsigned int &diem)
 {
 
 	//trung dan || ra ngoai man hinh
 	if (vc.state == 1 || vc.td.y == CHIEU_DAI)
 	{
-		diem += vc.state == GOT_SHOT ? 2 : 1;	//dan ban trung cho 2 diem
+		switch (vc.state)
+		{
+			case GOT_SHOT:
+			case NORMAL:
+				diem += 1;
+		}
 		return false;
 	}
 
@@ -102,7 +110,7 @@ bool updateBarrier(Barrier &vc, Car &car, int &diem)
 
 //Update trang thai cua TAT CA vat can
 //Tra ve false khi vat can VA CHAM VAO XE => game over
-bool updateBarriers(std::list <Barrier> &listvc, Car &car, int &diem)
+bool updateBarriers(std::list <Barrier> &listvc, Car &car, unsigned int &diem)
 {
 	std::list <Barrier>::iterator cursor;
 

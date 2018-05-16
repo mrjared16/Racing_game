@@ -53,10 +53,15 @@ struct Barrier
 	char hd_vc[3][3];
 };
 
-struct Coin
+struct Item
 {
 	ToaDo td;
-	char hd = '$';
+	int type;
+	//1: coin
+	//2: item_1: dan: 20 vien
+	//3: item_2: dang phat trien
+	char hd;
+	//$, *, ?
 };
 
 //Dan
@@ -78,6 +83,14 @@ void mainMenu();
 int random(int start, int end)
 {
 	return start + rand() % (end + 1 - start);
+}
+
+//Tra ve true neu thoa so % xay ra
+//Dung de sinh dan, item, ...
+bool chance(int percent)
+{
+	int ran = random(1, 100);
+	return (ran <= percent);
 }
 
 void showBackButton(int x = -1, int y = -1) {
