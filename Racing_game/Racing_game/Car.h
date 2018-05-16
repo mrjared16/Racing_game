@@ -1,6 +1,11 @@
 #pragma once
 #include "Functions.h"
 
+#define MOVE_UP 2
+#define MOVE_DOWN -2
+
+#define MOVE_RIGHT 1
+#define MOVE_LEFT -1
 
 
 void setCarAppearance(Car &car)
@@ -20,6 +25,29 @@ void khoiTaoCar(Car &car)
 	car.td.x = CHIEU_RONG / 2;
 	car.td.y = CHIEU_DAI - 2;
 	setCarAppearance(car);
+}
+
+void moveCar(int direction)
+{
+	switch (direction)
+	{
+	case MOVE_UP:
+		if (car.td.y > 1)
+			car.td.y--;
+		return;
+	case MOVE_DOWN:
+		if (car.td.y < CHIEU_DAI - 2)
+			car.td.y++;
+		return;
+	case MOVE_RIGHT:
+		if ((car.td.x + 1) + 1 <= CHIEU_RONG - 2)
+			car.td.x++;
+		return;
+	case MOVE_LEFT:
+		if (car.td.x > 2)
+			car.td.x--;
+		return;
+	}
 }
 
 void drawCarOnBuffer(Car &car, Cell map[CHIEU_DAI][CHIEU_RONG], int color)

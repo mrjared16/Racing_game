@@ -119,21 +119,21 @@ void pause()
 bool getKeyPressed()
 {
 	//Di chuyển xe và tạm dừng game.
-	if (GetAsyncKeyState(VK_LEFT) && car.td.x  > 2)
+	if (GetAsyncKeyState(VK_LEFT))
 	{
-		car.td.x--;
+		moveCar(MOVE_LEFT);
 	}
-	if (GetAsyncKeyState(VK_RIGHT) && (car.td.x + 1) + 1 <= CHIEU_RONG - 2)
+	if (GetAsyncKeyState(VK_RIGHT))
 	{
-		car.td.x++;
+		moveCar(MOVE_RIGHT);
 	}
-	if (GetAsyncKeyState(VK_UP) && (car.td.y > 1))
+	if (GetAsyncKeyState(VK_UP))
 	{
-		car.td.y--;
+		moveCar(MOVE_UP);
 	}
-	if (GetAsyncKeyState(VK_DOWN) && (car.td.y < CHIEU_DAI - 2))
+	if (GetAsyncKeyState(VK_DOWN))
 	{
-		car.td.y++;
+		moveCar(MOVE_DOWN);
 	}
 
 	if (GetAsyncKeyState(VK_SPACE))
