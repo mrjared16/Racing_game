@@ -6,6 +6,8 @@
 
 #define MAX_BARRIER 8
 
+#define BARRIER_RADIUS 1
+
 //Ham tao hinh dang vat can
 void setBarrierAppearance(Barrier &vc)
 {
@@ -31,8 +33,8 @@ void setBarrierAppearance(Barrier &vc)
 void khoiTaoBarrier(Barrier &vc)
 {
 	// bỏ 2 khung hai bên nên vật cản có x nhỏ nhẩt là 2, lớn nhất là chiều rộng-3.
-	vc.td.y = -3;
-	vc.td.x = random(2, CHIEU_RONG - 3);
+	vc.td.y = SMALLEST_Y - BARRIER_RADIUS;
+	vc.td.x = random(SMALLEST_X + BARRIER_RADIUS, BIGGEST_X - BARRIER_RADIUS);
 	setBarrierAppearance(vc);
 }
 
@@ -57,6 +59,7 @@ void barrierGenerator(std::list <Barrier> &listvc)
 		listvc.push_back(vc_new);
 		return;
 	}
+
 	int barrier_rate = 50;	//50%, tam thoi, sau nay se thay doi theo level
 	bool ra_vatcan = chance(barrier_rate);
 
@@ -80,7 +83,7 @@ bool updateBarrier(Barrier &vc, Car &car, unsigned int &diem)
 {
 
 	//trung dan || ra ngoai man hinh
-	if (vc.state == 1 || vc.td.y == CHIEU_DAI)
+	if (vc.state == 1 || (!isInMapY(vc.td.y + BARRIER_RADIUS) && !isInMapY(vc.td.y - BARRIER_RADIUS)))
 	{
 		switch (vc.state)
 		{
@@ -144,7 +147,7 @@ void drawBarrierOnBuffer(Barrier &vc, Cell map[CHIEU_DAI][CHIEU_RONG], int color
 	{
 		for (int j = 0; j < 3; j++)
 		{
-			if (y_vc + i - 1 >= 0 && y_vc + i - 1 < CHIEU_DAI)
+			if (isInMapY(y_vc + i - 1))
 			{
 				map[y_vc + i - 1][x_vc + j - 1].character = vc.hd_vc[i][j];
 				map[y_vc + i - 1][x_vc + j - 1].color = color;		//màu đỏ

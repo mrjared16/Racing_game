@@ -14,6 +14,12 @@ extern void play(bool auto_play = false);
 #define CHIEU_RONG 30
 #define CHIEU_DAI 25
 
+#define SMALLEST_X 1
+#define BIGGEST_X (CHIEU_RONG - 2)
+
+#define SMALLEST_Y 0
+#define BIGGEST_Y (CHIEU_DAI - 1)
+
 #define RED 4
 #define YELLOW 6
 #define WHITE 15
@@ -93,6 +99,21 @@ bool chance(int percent)
 	return (ran <= percent);
 }
 
+bool isInMapX(int x)
+{
+	return (x >= SMALLEST_X && x <= BIGGEST_X); // chieu rong da tinh luon 2 bien
+}
+
+bool isInMapY(int y)
+{
+	return (y >= SMALLEST_Y && y <= BIGGEST_Y);
+}
+
+bool isInMap(int x, int y)
+{
+	return isInMapX(x) && isInMapY(y);
+}
+
 void showBackButton(int x = -1, int y = -1) {
 	if (x != -1 && y != -1)
 		gotoXY(x, y);
@@ -100,6 +121,7 @@ void showBackButton(int x = -1, int y = -1) {
 	printf("Back.");
 	while (_getch() != 13);
 }
+
 
 void showMenu(const char *label[], int len, int &index, int selected_color, int x_start, int y_start)
 {
@@ -142,6 +164,7 @@ void showMenu(const char *label[], int len, int &index, int selected_color, int 
 		}
 	}
 }
+
 
 void hideMenu(int len, int x_start, int y_start)
 {

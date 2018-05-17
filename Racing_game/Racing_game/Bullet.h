@@ -4,11 +4,13 @@
 
 #define DISTANCE_BETWEEN_2_BULLETS 6
 
+//RADIUS = 0
+
 //Khoi tao bullet
 void khoiTaoBullet(Bullet &new_bullet, Car &car)
 {
 	new_bullet.td.x = car.td.x;
-	new_bullet.td.y = car.td.y - 3;
+	new_bullet.td.y = car.td.y - CAR_RADIUS;
 }
 
 /*//Dieu kien de sau nay su dung
@@ -52,7 +54,7 @@ bool checkVaChamBullet(Bullet &dan, std::list<Barrier> &list_barrier)
 //Tra ve false khi dan ra ngoai man hinh => remove
 bool updateBullet(Bullet &bullet)
 {
-	if (bullet.td.y < 0)	//ra khoi mna hinh
+	if (!isInMapY(bullet.td.y - 1))	//ra khoi mna hinh
 		return false;
 
 	bullet.td.y--;			//di chuyen len

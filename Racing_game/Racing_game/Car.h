@@ -7,6 +7,7 @@
 #define MOVE_RIGHT 1
 #define MOVE_LEFT -1
 
+#define CAR_RADIUS 1
 
 void setCarAppearance(Car &car)
 {
@@ -22,29 +23,29 @@ void setCarAppearance(Car &car)
 
 void khoiTaoCar(Car &car)
 {
-	car.td.x = CHIEU_RONG / 2;
-	car.td.y = CHIEU_DAI - 2;
+	car.td.x = BIGGEST_X / 2;
+	car.td.y = BIGGEST_Y - CAR_RADIUS;
 	setCarAppearance(car);
 }
 
-void moveCar(int direction)
+void moveCar(Car &car, int direction)
 {
 	switch (direction)
 	{
 	case MOVE_UP:
-		if (car.td.y > 1)
+		if (isInMapY(car.td.y - CAR_RADIUS - 1))
 			car.td.y--;
 		return;
 	case MOVE_DOWN:
-		if (car.td.y < CHIEU_DAI - 2)
+		if (isInMapY(car.td.y + CAR_RADIUS + 1))
 			car.td.y++;
 		return;
 	case MOVE_RIGHT:
-		if ((car.td.x + 1) + 1 <= CHIEU_RONG - 2)
+		if (isInMapX(car.td.x + CAR_RADIUS + 1))
 			car.td.x++;
 		return;
 	case MOVE_LEFT:
-		if (car.td.x > 2)
+		if (isInMapX(car.td.x - CAR_RADIUS - 1))
 			car.td.x--;
 		return;
 	}

@@ -1,4 +1,6 @@
 
+//USING REFERENCE TO AVOID COPY STRUCT
+
 #include "Functions.h"
 
 #include "Diem.h"
@@ -32,7 +34,7 @@ void khoiTao()
 	list_dan.clear();
 	list_item.clear();
 
-	diem = 0;
+	diem = 60;
 	dan = 0;
 	
 	//xe được khởi tạo cuối dường đua
@@ -121,19 +123,19 @@ bool getKeyPressed()
 	//Di chuyển xe và tạm dừng game.
 	if (GetAsyncKeyState(VK_LEFT))
 	{
-		moveCar(MOVE_LEFT);
+		moveCar(car, MOVE_LEFT);
 	}
 	if (GetAsyncKeyState(VK_RIGHT))
 	{
-		moveCar(MOVE_RIGHT);
+		moveCar(car, MOVE_RIGHT);
 	}
 	if (GetAsyncKeyState(VK_UP))
 	{
-		moveCar(MOVE_UP);
+		moveCar(car, MOVE_UP);
 	}
 	if (GetAsyncKeyState(VK_DOWN))
 	{
-		moveCar(MOVE_DOWN);
+		moveCar(car, MOVE_DOWN);
 	}
 
 	if (GetAsyncKeyState(VK_SPACE))
@@ -154,7 +156,7 @@ bool updateTrangThai()
 
 	updateBullets(list_dan, list_vc, car, dan);		//dan
 
-	updateItems(list_item, car, diem, dan);			//	item
+	updateItems(list_item, car, diem, dan, list_vc);			//	item
 
 	
 	return true;
@@ -220,7 +222,7 @@ void play(bool auto_play)
 		
 		show();
 
-		long sleep_time = 100 - 1.5 * diem;	//tam thoi, sau nay se thay doi theo lv
+		long sleep_time = 120 - 1.5 * diem;	//tam thoi, sau nay se thay doi theo lv
 		if (sleep_time < 10)
 			sleep_time = 10;
 

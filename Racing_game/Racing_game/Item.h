@@ -2,7 +2,7 @@
 
 #include "Functions.h"
 
-#define NUL 0
+#define NUL -2
 
 #define COIN 1		//tien, an dc +2d
 #define TYPE_1 2	//dan, an dc +20 dan
@@ -12,13 +12,22 @@
 
 #define ITEM_RATE 5
 #define TYPE_1_2_RATE 20
-#define TYPE_2_RATE 25
+#define TYPE_2_RATE 10
+
+//RADIUS = 0
 
 //Khoi tao item
-void khoiTaoItem(Item &new_item, int type)
+void khoiTaoItem(Item &new_item, int type, int x = NUL, int y = NUL)
 {
-	new_item.td.y = -1;
-	new_item.td.x = random(2, CHIEU_RONG - 3);	// can dieu chinh de ko trung voi vat can
+	if (x == NUL && y == NUL)
+	{
+		new_item.td.y = SMALLEST_Y;
+		new_item.td.x = random(SMALLEST_X, BIGGEST_X);	// can dieu chinh de ko trung voi vat can
+	}
+	else {
+		new_item.td.y = y;
+		new_item.td.x = x;
+	}
 	new_item.type = type;
 	switch (type)
 	{
@@ -26,24 +35,55 @@ void khoiTaoItem(Item &new_item, int type)
 			new_item.hd = '$';
 			return;
 		case TYPE_1:
-			new_item.hd = '?';
+			new_item.hd = '*';
 			return;
 		case TYPE_2:
-			new_item.hd = '*';
+			new_item.hd = '?';
 			return;
 	}
 }
 
-void itemActive(Item &item, unsigned int &diem, int &dan)
+void convertBarrierToCoin(Barrier &barrier, std::list<Item> &list_item)
+{
+	Item new_item;
+	
+	int x_barrier = barrier.td.x;
+	int y_barrier = barrier.td.y;
+	for (int i = 0; i < 3; i++)
+	{
+		for (int j = 0; j < 3; j++)
+		{
+			if (isInMapY(y_barrier + i - 1) && barrier.hd_vc[i][j] != ' ')
+			{
+				khoiTaoItem(new_item, COIN, x_barrier + j - 1, y_barrier + i - 1);
+				list_item.push_back(new_item);
+			}
+		}
+	}
+}
+
+void convertAllBarrierToCoins(std::list<Barrier> &list_barrier, std::list<Item> &list_item)
+{
+	std::list<Barrier>::iterator cursor, end;
+	for (cursor = list_barrier.begin(), end = list_barrier.end(); cursor != end; cursor++)
+	{
+		convertBarrierToCoin(*cursor, list_item);
+	}
+	list_barrier.clear();
+}
+
+void itemActive(Item &item, unsigned int &diem, int &dan, std::list<Barrier> &list_barrier, std::list<Item> &list_item)
 {
 	switch (item.type)
 	{
-	case COIN:
+	case COIN:			// an tien + diem
 		diem += 2;
 		return;
-	case TYPE_1:
-	case TYPE_2:	//chua phat trien, tam thoi cho giong item 1
+	case TYPE_1:		// an dan duoc + 20 dan
 		dan += 20;
+		return;
+	case TYPE_2:		// hoa tat ca cac vat can thanh tien
+		convertAllBarrierToCoins(list_barrier, list_item);
 		return;
 	}
 }
@@ -89,7 +129,7 @@ bool itemVaChamCar(Item &item, Car &car)
 //Tra ve false khi item ra ngoai man hinh => remove
 bool updateItem(Item &item)
 {
-	if (item.td.y >= CHIEU_DAI - 1)	//ra khoi mna hinh
+	if (!isInMapY(item.td.y + 1))	//ra khoi mna hinh
 		return false;
 
 	item.td.y++;			//di chuyen xuong
@@ -109,7 +149,7 @@ void itemGenerator(std::list<Item> &list_item)
 
 //Ham update trang thai cua nhung vien item co tren man hinh
 //Cho item di chuyen len va kiem tra va cham voi vat can
-bool updateItems(std::list<Item> &list_item, Car &car, unsigned int &diem, int &dan)
+bool updateItems(std::list<Item> &list_item, Car &car, unsigned int &diem, int &dan, std::list<Barrier> &list_barrier)
 {
 	std::list<Item>::iterator cursor, end;
 
@@ -126,7 +166,7 @@ bool updateItems(std::list<Item> &list_item, Car &car, unsigned int &diem, int &
 		// neu ra ngoai man hinh || va cham xe
 		if (!check_vitri || check_vacham) {
 			if (check_vacham)
-				itemActive(*cursor, diem, dan);
+				itemActive(*cursor, diem, dan, list_barrier, list_item);
 			cursor = list_item.erase(cursor);	//remove ra khoi list
 		}
 		else {
