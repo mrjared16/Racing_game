@@ -12,11 +12,11 @@
 
 #define ITEM_RATE 5
 #define TYPE_1_2_RATE 20
-#define TYPE_2_RATE 10
+#define TYPE_2_RATE 25
 
 //RADIUS = 0
 
-//Khoi tao item
+//Khoi tao item, bo trong toa do se sinh ngau nhien
 void khoiTaoItem(Item &new_item, int type, int x = NUL, int y = NUL)
 {
 	if (x == NUL && y == NUL)
@@ -43,7 +43,8 @@ void khoiTaoItem(Item &new_item, int type, int x = NUL, int y = NUL)
 	}
 }
 
-void convertBarrierToCoin(Barrier &barrier, std::list<Item> &list_item)
+//Bien doi 1 vat can thanh coins
+void convertBarrierToCoins(Barrier &barrier, std::list<Item> &list_item)
 {
 	Item new_item;
 	
@@ -62,17 +63,19 @@ void convertBarrierToCoin(Barrier &barrier, std::list<Item> &list_item)
 	}
 }
 
+//Bien doi tat ca cac vat pham thanh coins
 void convertAllBarrierToCoins(std::list<Barrier> &list_barrier, std::list<Item> &list_item)
 {
 	std::list<Barrier>::iterator cursor, end;
 	for (cursor = list_barrier.begin(), end = list_barrier.end(); cursor != end; cursor++)
 	{
-		convertBarrierToCoin(*cursor, list_item);
+		convertBarrierToCoins(*cursor, list_item);
 	}
-	list_barrier.clear();
+	list_barrier.clear();	//xoa tat ca vat can
 }
 
-void itemActive(Item &item, unsigned int &diem, int &dan, std::list<Barrier> &list_barrier, std::list<Item> &list_item)
+//Ham kick hoat item, dua vao item type
+void itemActive(Item &item, int &diem, int &dan, std::list<Barrier> &list_barrier, std::list<Item> &list_item)
 {
 	switch (item.type)
 	{
@@ -149,7 +152,7 @@ void itemGenerator(std::list<Item> &list_item)
 
 //Ham update trang thai cua nhung vien item co tren man hinh
 //Cho item di chuyen len va kiem tra va cham voi vat can
-bool updateItems(std::list<Item> &list_item, Car &car, unsigned int &diem, int &dan, std::list<Barrier> &list_barrier)
+bool updateItems(std::list<Item> &list_item, Car &car, int &diem, int &dan, std::list<Barrier> &list_barrier)
 {
 	std::list<Item>::iterator cursor, end;
 

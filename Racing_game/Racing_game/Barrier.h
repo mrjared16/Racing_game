@@ -4,7 +4,7 @@
 #define NORMAL 0
 #define GOT_SHOT 1
 
-#define MAX_BARRIER 8
+//#define MAX_BARRIER 8
 
 #define BARRIER_RADIUS 1
 
@@ -50,7 +50,7 @@ bool barrierVaChamCar(Barrier &vc, Car &car)
 
 
 //Ham sinh vat can
-void barrierGenerator(std::list <Barrier> &listvc)
+void barrierGenerator(std::list <Barrier> &listvc, Level &stats)
 {
 	Barrier vc_new;
 	if (listvc.empty())	//them vat can dau tien
@@ -60,11 +60,10 @@ void barrierGenerator(std::list <Barrier> &listvc)
 		return;
 	}
 
-	int barrier_rate = 50;	//50%, tam thoi, sau nay se thay doi theo level
-	bool ra_vatcan = chance(barrier_rate);
+	bool ra_vatcan = chance(stats.rate_generate_barrier);
 
 	//cần update để tránh hiện tượng trùng, && listvc.front().td.y>1chỉ là biện pháp tạm thời.
-	if (listvc.size() < MAX_BARRIER && ra_vatcan && listvc.back().td.y > 1 && listvc.front().td.y > 1)
+	if (listvc.size() < stats.max_barrier && ra_vatcan && listvc.back().td.y > 1 && listvc.front().td.y > 1)
 	{
 		khoiTaoBarrier(vc_new);
 		listvc.push_back(vc_new);
@@ -79,51 +78,55 @@ void barrierGenerator(std::list <Barrier> &listvc)
 //Tra ve false neu vat can RA KHOI MAP hoac TRUNG DAN=> remove
 //Dua vao vat can de tinh diem
 //1 diem neu vat can bi huy
-bool updateBarrier(Barrier &vc, Car &car, unsigned int &diem)
+bool updateBarrier(Barrier &vc, Car &car, Level &stats)
 {
 
 	//trung dan || ra ngoai man hinh
-	if (vc.state == 1 || (!isInMapY(vc.td.y + BARRIER_RADIUS) && !isInMapY(vc.td.y - BARRIER_RADIUS)))
+	if (vc.state == GOT_SHOT || (!isInMapY(vc.td.y + BARRIER_RADIUS) && !isInMapY(vc.td.y - BARRIER_RADIUS)))
 	{
 		switch (vc.state)
 		{
 			case GOT_SHOT:
 			case NORMAL:
-				diem += 1;
+				stats.diem += 1;
 		}
 		return false;
 	}
 
 	vc.td.y++;	//vat can di chuyen xuong
 
-	/*Test AI
-	//vật cản đuổi theo xe, hàm random có thể chỉnh sửa để tiện cho việc tự động hóa, vì nếu nó đuổi theo xe 100% thì auto thua.
-	int k = random(1, 7 - (diem / 20));
-	if (k == 1)
+	if (stats.max_amplitude > 0)
 	{
-		if (vc.td.x > car.td.x)
-			vc.td.x--;
-		if (vc.td.x < car.td.x)
-			vc.td.x++;
+		bool fluctuation_chance = chance(stats.rate_fluctuation);
+		if (fluctuation_chance)
+		{
+			int amplitude = random(1, stats.max_amplitude);
+
+			// di chuyen ve huong xe => tang do kho
+			if (vc.td.x > car.td.x)		
+				vc.td.x -= amplitude;
+
+			if (vc.td.x < car.td.x)
+				vc.td.x += amplitude;
+		}
 	}
-	*/
 	return true;
 }
 
 
 //Update trang thai cua TAT CA vat can
 //Tra ve false khi vat can VA CHAM VAO XE => game over
-bool updateBarriers(std::list <Barrier> &listvc, Car &car, unsigned int &diem)
+bool updateBarriers(std::list <Barrier> &listvc, Car &car, Level &stats)
 {
 	std::list <Barrier>::iterator cursor;
 
 	//sinh vat can
-	barrierGenerator(listvc);
+	barrierGenerator(listvc, stats);
 
 	//listvc da co it nhat 1 vat can
 	for (cursor = listvc.begin(); cursor != listvc.end(); )	//chuyen cursor ++ xuong duoi de tranh loi khi erase
 	{
-		if (!updateBarrier(*cursor, car, diem)) {		//di chuyen vat can, tra ve true khi vat can ra khoi ngoai man hinh => remove vat can
+		if (!updateBarrier(*cursor, car, stats)) {		//di chuyen vat can, tra ve true khi vat can ra khoi ngoai man hinh => remove vat can
 			cursor = listvc.erase(cursor);
 		}
 		else {

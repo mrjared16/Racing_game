@@ -11,13 +11,12 @@
 #include "Bullet.h"
 #include "Item.h"
 #include "AI.h"
+#include "Level.h"
 
 Cell map[CHIEU_DAI][CHIEU_RONG];
 
 Car car;
 //Barrier vc5;
-
-unsigned int diem;
 
 std::list <Barrier> list_vc;		//dslk dùng để lưu các vật cản
 
@@ -25,6 +24,8 @@ int dan;	//so vien dan co the ban
 std::list <Bullet> list_dan;		//nhung vien dan da duoc ban ra
 
 std::list <Item> list_item;		
+
+Level stats;	//stat luu tru nhung thu nhu level, diem, ti le ra vat can, so vat can toi da, ...
 
 //Khoi tao lai xe, vat can, dan, diem, map
 void khoiTao()
@@ -34,7 +35,7 @@ void khoiTao()
 	list_dan.clear();
 	list_item.clear();
 
-	diem = 60;
+	stats.diem = 0;
 	dan = 0;
 	
 	//xe được khởi tạo cuối dường đua
@@ -68,7 +69,7 @@ void gameOver() {
 
 	Record player;		//lưu tên và điểm người đangg chơi.
 						//lấy tên người chơi
-	printf("Your score: %u\n", diem);
+	printf("Your score: %u\n", stats.diem);
 	printf("Player name: ");
 
 	//doc ten player
@@ -84,7 +85,7 @@ void gameOver() {
 	}
 
 	//lưu điểm
-	player.score = diem;
+	player.score = stats.diem;
 
 	//đưa vào top player nếu có thể.
 	updateDiemCao(player);
@@ -151,12 +152,14 @@ bool getKeyPressed()
 //Tra ve false khi game over
 bool updateTrangThai()
 {
-	if (!updateBarriers(list_vc, car, diem))		//=> updateBarriers false khi vat can va cham vao xe 
+	updateLevelStats(stats);
+
+	if (!updateBarriers(list_vc, car, stats))		//=> updateBarriers false khi vat can va cham vao xe 
 		return false;							//=> game over
 
 	updateBullets(list_dan, list_vc, car, dan);		//dan
 
-	updateItems(list_item, car, diem, dan, list_vc);			//	item
+	updateItems(list_item, car, stats.diem, dan, list_vc);			//	item
 
 	
 	return true;
@@ -199,12 +202,18 @@ void show()
 		printf("\n");
 	}
 
-	gotoXY(CHIEU_RONG + 1, 0);
-	printf("Score: %2u", diem);
-	gotoXY(CHIEU_RONG + 1, 1);
-	printf("Bullet: %2d", dan);
+	// dung de kiem tra stats
+	// ban chinh thuc se ko co
+	const char *content[] = { "LEVEL %d", "Score: %3d", "Sleep time: %3d", "Max Barrier: %3d",
+		"Rate generate barrier: %3d", "Max Amplitude: %3d", "Rate Fluctuation: %3d", "Bullet: %3d" };
+	int stat[] = { stats.level, stats.diem, stats.sleep_time, stats.max_barrier, 
+				stats.rate_generate_barrier, stats.max_amplitude,stats.rate_fluctuation, dan};
+	int n = 8;
+	showStats(content, stat, n, CHIEU_RONG + 1, 0);
 }
 
+//Ham thuc hien tro choi, bien auto_play mac dinh la false
+//play(true) => chuc nang tu dong choi
 void play(bool auto_play)
 {
 	khoiTao();
@@ -222,11 +231,7 @@ void play(bool auto_play)
 		
 		show();
 
-		long sleep_time = 120 - 1.5 * diem;	//tam thoi, sau nay se thay doi theo lv
-		if (sleep_time < 10)
-			sleep_time = 10;
-
-		Sleep(sleep_time);
+		Sleep(stats.sleep_time);
 	}
 	gameOver();
 }

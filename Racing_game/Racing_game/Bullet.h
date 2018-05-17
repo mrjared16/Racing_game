@@ -14,7 +14,7 @@ void khoiTaoBullet(Bullet &new_bullet, Car &car)
 }
 
 /*//Dieu kien de sau nay su dung
-bool dieuKienSinhBullet(unsigned int diem)
+bool dieuKienSinhBullet(int diem)
 {
 	//co the la an item hoac la duoc so diem cu the
 	return (diem % 10 == 5);	//tam thoi de test

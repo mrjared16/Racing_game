@@ -155,6 +155,7 @@
     <ClInclude Include="Diem.h" />
     <ClInclude Include="Functions.h" />
     <ClInclude Include="Guide.h" />
+    <ClInclude Include="Level.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="res\Guide.txt" />

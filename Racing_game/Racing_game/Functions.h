@@ -80,18 +80,31 @@ struct Bullet
 struct Record
 {
 	char name[MAX_PLAYER_NAME] = {};
-	unsigned int score;
+	int score;
 };
+
+struct Level {
+	int diem;			
+	int level;			
+	int sleep_time;				//thoi gian nghi de ve lai man hinh, cang nho thi ve lai cang nhieu => toc do game tang
+	int max_barrier;			//so vat can toi da
+	int rate_generate_barrier;	//ti le sinh vat can
+	int max_amplitude;			//bien do dao dong toi da
+	int rate_fluctuation;		//ti le dao dong
+};
+
+
 
 void mainMenu();
 //extern void huongdan();
 
+//Lay ngau nhien mot gia tri trong doan [start, end]
 int random(int start, int end)
 {
 	return start + rand() % (end + 1 - start);
 }
 
-//Tra ve true neu thoa so % xay ra
+//Ham nhu mot phep quay thu, neu may man dat dc ti le phan tram thi tra ve true
 //Dung de sinh dan, item, ...
 bool chance(int percent)
 {
@@ -99,21 +112,25 @@ bool chance(int percent)
 	return (ran <= percent);
 }
 
+//Kiem tra toa do x nam ngang co nam trong map ko
 bool isInMapX(int x)
 {
 	return (x >= SMALLEST_X && x <= BIGGEST_X); // chieu rong da tinh luon 2 bien
 }
 
+//Kiem tra toa do y nam thang dung co nam trong map ko
 bool isInMapY(int y)
 {
 	return (y >= SMALLEST_Y && y <= BIGGEST_Y);
 }
 
+//Kiem tra toa do (x,y) co thuoc map khong
 bool isInMap(int x, int y)
 {
 	return isInMapX(x) && isInMapY(y);
 }
 
+//Hien thi mot nut "back" tra hinh, hien thi back va cho nguoi dung an phim enter de thuc hien tiep
 void showBackButton(int x = -1, int y = -1) {
 	if (x != -1 && y != -1)
 		gotoXY(x, y);
@@ -123,6 +140,16 @@ void showBackButton(int x = -1, int y = -1) {
 }
 
 
+void showStats(const char *content[], int stat[], int n, int x_start, int y_start)
+{
+	for (int i = 0; i < n; i++)
+	{
+		gotoXY(x_start, y_start + i);
+		printf(content[i], stat[i]);
+	}
+}
+
+//Hien menu
 void showMenu(const char *label[], int len, int &index, int selected_color, int x_start, int y_start)
 {
 	int key = 0;
