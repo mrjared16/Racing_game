@@ -6,9 +6,9 @@
 //updateFileDiemCao() => reset diem
 //updateFileDiemCao(&dc) => update dc
 
+//Doc thong tin nguoi choi tu file
 bool readRecord(FILE *stream, Record &player)
 {
-	
 	if (fgets(player.name, 26, stream) == NULL)
 		return false;	//doc 1 dong => bao gom ca ten va user
 
@@ -22,7 +22,8 @@ bool readRecord(FILE *stream, Record &player)
 	return true;
 }
 
-void updateFileDiemCao(std::list <Record> *dc = NULL)
+//Ham cap nhat thong tin diem cao vao file
+void updateFileDiemCao(list <Record> *dc = NULL)
 {
 	//Nếu người dùng thiết lập thì reset lại điểm là là player12345....
 	FILE *fout;
@@ -37,7 +38,7 @@ void updateFileDiemCao(std::list <Record> *dc = NULL)
 	}
 	else
 	{
-		std::list <Record>::iterator cursor1;
+		list <Record>::iterator cursor1;
 		// do da loai bo tu truoc nen chi co 5 phan tu
 		for (cursor1 = dc->begin(); cursor1 != dc->end(); cursor1++)
 		{
@@ -48,6 +49,7 @@ void updateFileDiemCao(std::list <Record> *dc = NULL)
 	fclose(fout);
 }
 
+//Ham cap nhat top 5 diem cao
 bool updateDiemCao(Record &player)
 {
 	//mở file.
@@ -55,7 +57,7 @@ bool updateDiemCao(Record &player)
 	fopen_s(&fin, PATH_HIGHSCORES, "r");
 
 	Record temp;	//bien tam de doc, dua vao list
-	std::list <Record> dc;
+	list <Record> dc;
 
 	//duyệt file đưa vào list.
 	while (!feof(fin))
@@ -65,7 +67,7 @@ bool updateDiemCao(Record &player)
 	}
 
 	bool add = false;
-	std::list <Record>::iterator cursor1;
+	list <Record>::iterator cursor1;
 
 	//tim vi tri chen diem cao (neu co)
 	for (cursor1 = dc.begin(); cursor1 != dc.end(); cursor1++)
@@ -90,6 +92,7 @@ bool updateDiemCao(Record &player)
 	return add;
 }
 
+//Ham xuat muc top 5 diem cao
 void xuatDiemCao()
 {
 	system("cls");		//xóa màn hình giao diện trước.
@@ -109,19 +112,27 @@ void xuatDiemCao()
 	int num = 0;
 	Record player;
 	
+	
 	while (!feof(fin))
 	{
 		//ko nen su dung scanf de doc string
 		if (readRecord(fin, player))
 		{
-			printf("\tNo.%d:  ", ++num);
-			printf("%s - \t%u\n", player.name, player.score);
+			gotoXY(8, num + 3);
+			printf("No.%d:  ", ++num);
+			gotoXY(16, num + 2);
+			printf("%s", player.name);
+			gotoXY(41, num + 2);
+			printf("<>");
+			gotoXY(43, num + 2);
+			printf("%3u", player.score);
 		}
 	}
 
 	fclose(fin);
 }
 
+//Ham in menu Hall of Game va hieu ung dong
 void scoreMenu()
 {
 	system("cls");		//xoá màn hình giao diện trước, đưa cho người dùng nhiều sự lựa chọn.
@@ -134,7 +145,7 @@ void scoreMenu()
 	int n_label = 3;
 	const char *label[] = { "I want to see it.", "Reset HOF.", "Back." };
 
-	showMenu(label, n_label, index, LIGHT_RED, 8, 2);
+	MenuFuntions(label, n_label, index, LIGHT_RED, 8, 2);
 
 	system("cls");
 
@@ -144,6 +155,7 @@ void scoreMenu()
 			break;
 		case 2:
 			updateFileDiemCao();	//ham updateFileDiemCao ko co doi so se reset diem
+			gotoXY(8, 4);
 			printf("High scores reset.\n");
 			break;
 		case 3:
@@ -152,7 +164,7 @@ void scoreMenu()
 	}
 
 	printf("\n");
-	showBackButton();
+	showBackButton(8, 8);
 
 	scoreMenu();	//ép buộc người dùng nhấn Enter để trở về mục điểm cao, nếu không không chạy.
 }

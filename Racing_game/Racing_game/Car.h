@@ -9,7 +9,8 @@
 
 #define CAR_RADIUS 1
 
-void setCarAppearance(Car &car)
+//Hinh dang xe
+void setCarShape(Car &car)
 {
 	//o o 
 	//:X:
@@ -21,13 +22,15 @@ void setCarAppearance(Car &car)
 	car.hd_xe[1][1] = 'X';
 }
 
-void khoiTaoCar(Car &car)
+//Khoi tao xe
+void InnitCar(Car &car)
 {
 	car.td.x = BIGGEST_X / 2;
 	car.td.y = BIGGEST_Y - CAR_RADIUS;
-	setCarAppearance(car);
+	setCarShape(car);
 }
 
+//Nhan huong va di chuyen toa do xe
 void moveCar(Car &car, int direction)
 {
 	switch (direction)
@@ -51,6 +54,7 @@ void moveCar(Car &car, int direction)
 	}
 }
 
+//Ve xe lai tren buffer
 void drawCarOnBuffer(Car &car, Cell map[CHIEU_DAI][CHIEU_RONG], int color)
 {
 	int x_xe = car.td.x;

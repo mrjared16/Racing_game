@@ -1,6 +1,5 @@
 #pragma once
 
-
 int getLevel(int diem)
 {
 	return (diem / 5);
@@ -11,7 +10,7 @@ int getSleepTime(int level)
 	return (level < 10) ? 100 - level * 10 : 10;
 }
 
-int getMaxBarrier(int level)
+int getMaxObstacle(int level)
 {
 	if (level > 30)
 		return 8;
@@ -23,7 +22,7 @@ int getMaxBarrier(int level)
 	return (13 + level) / 4;
 }
 
-int getRateGenerateBarrier(int level)
+int getRateGenerateObstacle(int level)
 {
 	if (level > 30)
 		return 25;
@@ -56,8 +55,8 @@ void updateLevelStats(Level &stats)
 
 	//update stat
 	stats.sleep_time = getSleepTime(stats.level);
-	stats.max_barrier = getMaxBarrier(stats.level);
-	stats.rate_generate_barrier = getRateGenerateBarrier(stats.level);
+	stats.max_obstacle = getMaxObstacle(stats.level);
+	stats.rate_generate_obstacle = getRateGenerateObstacle(stats.level);
 	stats.max_amplitude = getMaxAmplitude(stats.level);
 	stats.rate_fluctuation = getRateFluctuation(stats.level);
 }

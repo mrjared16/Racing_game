@@ -14,6 +14,8 @@
 #define TYPE_1_2_RATE 20
 #define TYPE_2_RATE 25
 
+using namespace std;
+
 //RADIUS = 0
 
 //Khoi tao item, bo trong toa do se sinh ngau nhien
@@ -44,19 +46,19 @@ void khoiTaoItem(Item &new_item, int type, int x = NUL, int y = NUL)
 }
 
 //Bien doi 1 vat can thanh coins
-void convertBarrierToCoins(Barrier &barrier, std::list<Item> &list_item)
+void convertObstacleToCoins(Obstacle &obstacle, list<Item> &list_item)
 {
 	Item new_item;
 	
-	int x_barrier = barrier.td.x;
-	int y_barrier = barrier.td.y;
+	int x_obstacle = obstacle.td.x;
+	int y_obstacle = obstacle.td.y;
 	for (int i = 0; i < 3; i++)
 	{
 		for (int j = 0; j < 3; j++)
 		{
-			if (isInMapY(y_barrier + i - 1) && barrier.hd_vc[i][j] != ' ')
+			if (isInMapY(y_obstacle + i - 1) && obstacle.hd_vc[i][j] != ' ')
 			{
-				khoiTaoItem(new_item, COIN, x_barrier + j - 1, y_barrier + i - 1);
+				khoiTaoItem(new_item, COIN, x_obstacle + j - 1, y_obstacle + i - 1);
 				list_item.push_back(new_item);
 			}
 		}
@@ -64,18 +66,18 @@ void convertBarrierToCoins(Barrier &barrier, std::list<Item> &list_item)
 }
 
 //Bien doi tat ca cac vat pham thanh coins
-void convertAllBarrierToCoins(std::list<Barrier> &list_barrier, std::list<Item> &list_item)
+void convertAllObstaclesToCoins(list<Obstacle> &list_obstacle, list<Item> &list_item)
 {
-	std::list<Barrier>::iterator cursor, end;
-	for (cursor = list_barrier.begin(), end = list_barrier.end(); cursor != end; cursor++)
+	list<Obstacle>::iterator cursor, end;
+	for (cursor = list_obstacle.begin(), end = list_obstacle.end(); cursor != end; cursor++)
 	{
-		convertBarrierToCoins(*cursor, list_item);
+		convertObstacleToCoins(*cursor, list_item);
 	}
-	list_barrier.clear();	//xoa tat ca vat can
+	list_obstacle.clear();	//xoa tat ca vat can
 }
 
 //Ham kick hoat item, dua vao item type
-void itemActive(Item &item, int &diem, int &dan, std::list<Barrier> &list_barrier, std::list<Item> &list_item)
+void itemActive(Item &item, int &diem, int &dan, list<Obstacle> &list_obstacle, list<Item> &list_item)
 {
 	switch (item.type)
 	{
@@ -86,7 +88,7 @@ void itemActive(Item &item, int &diem, int &dan, std::list<Barrier> &list_barrie
 		dan += 20;
 		return;
 	case TYPE_2:		// hoa tat ca cac vat can thanh tien
-		convertAllBarrierToCoins(list_barrier, list_item);
+		convertAllObstaclesToCoins(list_obstacle, list_item);
 		return;
 	}
 }
@@ -95,7 +97,7 @@ void itemActive(Item &item, int &diem, int &dan, std::list<Barrier> &list_barrie
 //Kiem tra xem item co xuat hien khong
 //Neu ko xuat hien tra ve NUL
 //Neu xuat hien tra ve item type;
-int dieuKienSinhItem(std::list<Item> &list_item)
+int dieuKienSinhItem(list<Item> &list_item)
 {
 	//20% ra item
 	bool h = chance(ITEM_RATE); 
@@ -140,7 +142,7 @@ bool updateItem(Item &item)
 }
 
 //Ham sinh ra item (tren man hinh)
-void itemGenerator(std::list<Item> &list_item)
+void itemGenerator(list<Item> &list_item)
 {
 	int isGenerate = dieuKienSinhItem(list_item);
 	if (isGenerate != NUL) {
@@ -152,9 +154,9 @@ void itemGenerator(std::list<Item> &list_item)
 
 //Ham update trang thai cua nhung vien item co tren man hinh
 //Cho item di chuyen len va kiem tra va cham voi vat can
-bool updateItems(std::list<Item> &list_item, Car &car, int &diem, int &dan, std::list<Barrier> &list_barrier)
+bool updateItems(list<Item> &list_item, Car &car, int &diem, int &dan, list<Obstacle> &list_obstacle)
 {
-	std::list<Item>::iterator cursor, end;
+	list<Item>::iterator cursor, end;
 
 	itemGenerator(list_item);
 
@@ -169,7 +171,7 @@ bool updateItems(std::list<Item> &list_item, Car &car, int &diem, int &dan, std:
 		// neu ra ngoai man hinh || va cham xe
 		if (!check_vitri || check_vacham) {
 			if (check_vacham)
-				itemActive(*cursor, diem, dan, list_barrier, list_item);
+				itemActive(*cursor, diem, dan, list_obstacle, list_item);
 			cursor = list_item.erase(cursor);	//remove ra khoi list
 		}
 		else {
@@ -192,13 +194,12 @@ void drawItemOnBuffer(Item &item, Cell map[CHIEU_DAI][CHIEU_RONG], int color)
 }
 
 //Ve TAT CA vien item len buffer
-void drawItemsOnBuffer(std::list<Item> &list_item, Cell map[CHIEU_DAI][CHIEU_RONG], int color)
+void drawItemsOnBuffer(list<Item> &list_item, Cell map[CHIEU_DAI][CHIEU_RONG], int color)
 {
-	std::list <Item>::iterator cursor, end;
+	list <Item>::iterator cursor, end;
 	//in vat can len map.
 	for (cursor = list_item.begin(), end = list_item.end(); cursor != end; ++cursor)
 	{
 		drawItemOnBuffer(*cursor, map, color);
 	}
 }
-

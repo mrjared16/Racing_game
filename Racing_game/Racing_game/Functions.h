@@ -4,8 +4,10 @@
 #include <math.h>
 #include <time.h>
 #include <list>
-#include <string.h>
+#include <string>
 #include "Console.h"
+#include <iostream>
+using namespace std;
 
 extern void huongdan();
 extern void scoreMenu();
@@ -49,7 +51,7 @@ struct Car
 };
 
 //Vat can
-struct Barrier
+struct Obstacle
 {
 	ToaDo td;
 	int state = 0;	
@@ -79,6 +81,7 @@ struct Bullet
 
 struct Record
 {
+	//char name[] = {0};
 	char name[MAX_PLAYER_NAME] = {};
 	int score;
 };
@@ -87,13 +90,11 @@ struct Level {
 	int diem;			
 	int level;			
 	int sleep_time;				//thoi gian nghi de ve lai man hinh, cang nho thi ve lai cang nhieu => toc do game tang
-	int max_barrier;			//so vat can toi da
-	int rate_generate_barrier;	//ti le sinh vat can
+	int max_obstacle;			//so vat can toi da
+	int rate_generate_obstacle;	//ti le sinh vat can
 	int max_amplitude;			//bien do dao dong toi da
 	int rate_fluctuation;		//ti le dao dong
 };
-
-
 
 void mainMenu();
 //extern void huongdan();
@@ -139,7 +140,8 @@ void showBackButton(int x = -1, int y = -1) {
 	while (_getch() != 13);
 }
 
-
+//Hien thi cac thong so co ban khi choi game
+//Level, Diem, Dan
 void showStats(const char *content[], int stat[], int n, int x_start, int y_start)
 {
 	for (int i = 0; i < n; i++)
@@ -149,8 +151,8 @@ void showStats(const char *content[], int stat[], int n, int x_start, int y_star
 	}
 }
 
-//Hien menu
-void showMenu(const char *label[], int len, int &index, int selected_color, int x_start, int y_start)
+//Hieu ung dong cho cac menu
+void MenuFuntions(const char *label[], int len, int &index, int selected_color, int x_start, int y_start)
 {
 	int key = 0;
 
@@ -192,7 +194,7 @@ void showMenu(const char *label[], int len, int &index, int selected_color, int 
 	}
 }
 
-
+//An menu
 void hideMenu(int len, int x_start, int y_start)
 {
 	for (int i = 0; i < len; i++)
@@ -208,14 +210,14 @@ void mainMenu()
 	system("cls");		//xóa màn hình, ví dụ người dùng từ mục điểm cao trở ra, pbải xóa màn hình của giao diện điểm cao.
 						//nếu người dùng không trở ra từ ""Tiếp tục'" thì không có dòng Nhan 9 de tiep tuc.			
 	gotoXY(8, 0);
-	setColor(15);
+	setColor(LIGHT_CYAN);
 	printf("RACING GAME");
 
 	int index = 1;
 	int n_label = 5;
-	const char *label[] = { "New game.", "High scores.", "CPU vs CPU.", "Help.", "Exit." };
+	const char *label[] = { "New game.", "Hall of Fame.", "CPU vs CPU.", "Help.", "Exit." };
 
-	showMenu(label, n_label, index, LIGHT_RED, 8, 2);
+	MenuFuntions(label, n_label, index, LIGHT_RED, 8, 2);
 
 	//điều kiện chạy thuật toán.
 	switch (index) {
@@ -232,11 +234,10 @@ void mainMenu()
 			exit(0);
 		case 4:
 			huongdan();
-			showBackButton(16, 7);
+			showBackButton(32, 9);
 			mainMenu();		//ép buộc người dùng nhấn Enter để trở về menu chính.
 			return;
 	}
-
 }
 
 /*void oldmainMenu()

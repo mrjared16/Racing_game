@@ -4,12 +4,12 @@
 #define NORMAL 0
 #define GOT_SHOT 1
 
-//#define MAX_BARRIER 8
+//#define MAX_OBSTACLE 8
 
-#define BARRIER_RADIUS 1
+#define OBSTACLE_RADIUS 1
 
 //Ham tao hinh dang vat can
-void setBarrierAppearance(Barrier &vc)
+void setObstacleShape(Obstacle &vc)
 {
 	//quy định mảng 3*3.
 	for (int i = 0; i < 3; i++)
@@ -30,17 +30,17 @@ void setBarrierAppearance(Barrier &vc)
 }
 
 //Ham khoi tao vat can: vi tri, hinh dang
-void khoiTaoBarrier(Barrier &vc)
+void InnitObstacle(Obstacle &vc)
 {
 	// bỏ 2 khung hai bên nên vật cản có x nhỏ nhẩt là 2, lớn nhất là chiều rộng-3.
-	vc.td.y = SMALLEST_Y - BARRIER_RADIUS;
-	vc.td.x = random(SMALLEST_X + BARRIER_RADIUS, BIGGEST_X - BARRIER_RADIUS);
-	setBarrierAppearance(vc);
+	vc.td.y = SMALLEST_Y - OBSTACLE_RADIUS;
+	vc.td.x = random(SMALLEST_X + OBSTACLE_RADIUS, BIGGEST_X - OBSTACLE_RADIUS);
+	setObstacleShape(vc);
 }
 
 
 //Ham kiem tra va cham vat can va XE
-bool barrierVaChamCar(Barrier &vc, Car &car)
+bool ObstacleHitCar(Obstacle &vc, Car &car)
 {
 	int dx = abs(car.td.x - vc.td.x);
 	int dy = abs(car.td.y - vc.td.y);
@@ -49,23 +49,23 @@ bool barrierVaChamCar(Barrier &vc, Car &car)
 }
 
 
-//Ham sinh vat can
-void barrierGenerator(std::list <Barrier> &listvc, Level &stats)
+//Ham sinh list vat can
+void ObstacleGenerator(list <Obstacle> &listvc, Level &stats)
 {
-	Barrier vc_new;
+	Obstacle vc_new;
 	if (listvc.empty())	//them vat can dau tien
 	{
-		khoiTaoBarrier(vc_new);
+		InnitObstacle(vc_new);
 		listvc.push_back(vc_new);
 		return;
 	}
 
-	bool ra_vatcan = chance(stats.rate_generate_barrier);
+	bool ra_vatcan = chance(stats.rate_generate_obstacle);
 
 	//cần update để tránh hiện tượng trùng, && listvc.front().td.y>1chỉ là biện pháp tạm thời.
-	if (listvc.size() < stats.max_barrier && ra_vatcan && listvc.back().td.y > 1 && listvc.front().td.y > 1)
+	if (listvc.size() < stats.max_obstacle && ra_vatcan && listvc.back().td.y > 1 && listvc.front().td.y > 1)
 	{
-		khoiTaoBarrier(vc_new);
+		InnitObstacle(vc_new);
 		listvc.push_back(vc_new);
 		//thêm 1 vật cản vào list, để hàm update và hàm hiện thị sử dụng.
 		//Bình thường ban đầu list chỉ có 4 vật cản được tạo ra và tái tạo lại. 
@@ -78,11 +78,10 @@ void barrierGenerator(std::list <Barrier> &listvc, Level &stats)
 //Tra ve false neu vat can RA KHOI MAP hoac TRUNG DAN=> remove
 //Dua vao vat can de tinh diem
 //1 diem neu vat can bi huy
-bool updateBarrier(Barrier &vc, Car &car, Level &stats)
+bool updateObstacle(Obstacle &vc, Car &car, Level &stats)
 {
-
 	//trung dan || ra ngoai man hinh
-	if (vc.state == GOT_SHOT || (!isInMapY(vc.td.y + BARRIER_RADIUS) && !isInMapY(vc.td.y - BARRIER_RADIUS)))
+	if (vc.state == GOT_SHOT || (!isInMapY(vc.td.y + OBSTACLE_RADIUS) && !isInMapY(vc.td.y - OBSTACLE_RADIUS)))
 	{
 		switch (vc.state)
 		{
@@ -114,23 +113,24 @@ bool updateBarrier(Barrier &vc, Car &car, Level &stats)
 }
 
 
+
 //Update trang thai cua TAT CA vat can
 //Tra ve false khi vat can VA CHAM VAO XE => game over
-bool updateBarriers(std::list <Barrier> &listvc, Car &car, Level &stats)
+bool updateObstacles(list <Obstacle> &listvc, Car &car, Level &stats)
 {
-	std::list <Barrier>::iterator cursor;
+	list <Obstacle>::iterator cursor;
 
 	//sinh vat can
-	barrierGenerator(listvc, stats);
+	ObstacleGenerator(listvc, stats);
 
 	//listvc da co it nhat 1 vat can
 	for (cursor = listvc.begin(); cursor != listvc.end(); )	//chuyen cursor ++ xuong duoi de tranh loi khi erase
 	{
-		if (!updateBarrier(*cursor, car, stats)) {		//di chuyen vat can, tra ve true khi vat can ra khoi ngoai man hinh => remove vat can
+		if (!updateObstacle(*cursor, car, stats)) {		//di chuyen vat can, tra ve true khi vat can ra khoi ngoai man hinh => remove vat can
 			cursor = listvc.erase(cursor);
 		}
 		else {
-			if (barrierVaChamCar(*cursor, car))	//nếu game over thì trả về true để hủy vòng lặp bên ngoài.
+			if (ObstacleHitCar(*cursor, car))	//nếu game over thì trả về true để hủy vòng lặp bên ngoài.
 				return false;
 			cursor++;
 		}
@@ -139,9 +139,8 @@ bool updateBarriers(std::list <Barrier> &listvc, Car &car, Level &stats)
 	return true;
 }
 
-
 //Ham ve vat can len map
-void drawBarrierOnBuffer(Barrier &vc, Cell map[CHIEU_DAI][CHIEU_RONG], int color)
+void drawObstacleOnBuffer(Obstacle &vc, Cell map[CHIEU_DAI][CHIEU_RONG], int color)
 {
 	//tách hàm để dễ quản lí.
 	int x_vc = vc.td.x;
@@ -161,12 +160,13 @@ void drawBarrierOnBuffer(Barrier &vc, Cell map[CHIEU_DAI][CHIEU_RONG], int color
 }
 
 //Ham ve TAT CA vat can len map
-void drawBarriersOnBuffer(std::list <Barrier> &listvc, Cell map[CHIEU_DAI][CHIEU_RONG], int color)
+void drawObstaclesOnBuffer(list <Obstacle> &listvc, Cell map[CHIEU_DAI][CHIEU_RONG], int color)
 {
-	std::list <Barrier>::iterator cursor;
+	list <Obstacle>::iterator cursor;
 	//in vat can len map.
 	for (cursor = listvc.begin(); cursor != listvc.end(); cursor++)
 	{
-		drawBarrierOnBuffer(*cursor, map, color);
+		drawObstacleOnBuffer(*cursor, map, color);
 	}
 }
+

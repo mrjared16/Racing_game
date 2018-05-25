@@ -21,32 +21,31 @@ bool dieuKienSinhBullet(int diem)
 }*/
 
 //Kiem tra va cham giua dan va vat can
-bool bulletVaChamBarrier(Bullet &dan, Barrier &barrier)
+bool bulletHitObstacle(Bullet &dan, Obstacle &obstacle)
 {
 	int x1 = dan.td.x,
 		y1 = dan.td.y,
 
-		x2 = barrier.td.x,
-		y2 = barrier.td.y;
+		x2 = obstacle.td.x,
+		y2 = obstacle.td.y;
 
 	return (abs(x2 - x1) < 2 && abs(y2 - y1) < 2 && y2 > -2);
 }
 
 //Kiem tra xem vien dan co trung vat can nao khong
-bool checkVaChamBullet(Bullet &dan, std::list<Barrier> &list_barrier)
+bool checkVaChamBullet(Bullet &dan, list<Obstacle> &list_obstacle)
 {
 
-	std::list<Barrier>::iterator cursor;
-	for (cursor = list_barrier.begin(); cursor != list_barrier.end(); cursor++)	
+	list<Obstacle>::iterator cursor;
+	for (cursor = list_obstacle.begin(); cursor != list_obstacle.end(); cursor++)
 	{
-		if (bulletVaChamBarrier(dan, *cursor)) {
+		if (bulletHitObstacle(dan, *cursor)) {
 			// do something
 			(*cursor).state = GOT_SHOT;		//chuyen state thanh bi ban
-			setBarrierAppearance(*cursor);	//set lai hinh dang cua vat can
+			setObstacleShape(*cursor);	//set lai hinh dang cua vat can
 			return true;
 		}
 	}
-
 	return false;
 }
 
@@ -62,7 +61,7 @@ bool updateBullet(Bullet &bullet)
 }
 
 //Ham sinh ra dan (tren man hinh)
-void bulletGenerator(std::list<Bullet> &list_dan, Car &car, int &dan)
+void bulletGenerator(list<Bullet> &list_dan, Car &car, int &dan)
 {
 	//neu dan van con ma list chua co dan || du khoang cach ra vien dan tiep theo
 	if (dan > 0 && (list_dan.empty() || car.td.y - list_dan.back().td.y >= DISTANCE_BETWEEN_2_BULLETS))
@@ -76,9 +75,9 @@ void bulletGenerator(std::list<Bullet> &list_dan, Car &car, int &dan)
 
 //Ham update trang thai cua nhung vien dan co tren man hinh
 //Cho dan di chuyen len va kiem tra va cham voi vat can
-bool updateBullets(std::list<Bullet> &list_dan, std::list<Barrier> &list_barrier, Car &car, int &dan)
+bool updateBullets(list<Bullet> &list_dan, list<Obstacle> &list_obstacle, Car &car, int &dan)
 {
-	std::list<Bullet>::iterator cursor;
+	list<Bullet>::iterator cursor;
 	
 	bulletGenerator(list_dan, car, dan);
 	
@@ -86,7 +85,7 @@ bool updateBullets(std::list<Bullet> &list_dan, std::list<Barrier> &list_barrier
 		{
 		//di chuyen dan, tra ve false khi dan ra khoi ngoai man hinh => remove dan
 		//kiem tra vat can co cham vat can khong, tra ve true khi va cham & doi hinh dang vat can
-		if (!updateBullet(*cursor) || checkVaChamBullet(*cursor, list_barrier)) {
+		if (!updateBullet(*cursor) || checkVaChamBullet(*cursor, list_obstacle)) {
 			cursor = list_dan.erase(cursor);
 		}
 		else {
@@ -109,9 +108,10 @@ void drawBulletOnBuffer(Bullet &dan, Cell map[CHIEU_DAI][CHIEU_RONG], int color)
 }
 
 //Ve TAT CA vien dan len buffer
-void drawBulletsOnBuffer(std::list<Bullet> &list_dan, Cell map[CHIEU_DAI][CHIEU_RONG], int color)
+void drawBulletsOnBuffer(list<Bullet> &list_dan, Cell map[CHIEU_DAI][CHIEU_RONG], int color)
 {
-	std::list <Bullet>::iterator cursor;
+	
+	list <Bullet>::iterator cursor;
 	//in vat can len map.
 	for (cursor = list_dan.begin(); cursor != list_dan.end(); cursor++)
 	{

@@ -1,5 +1,5 @@
-Player1,0
-Player2,0
-Player3,0
-Player4,0
-Player5,0
+nam,77
+nam,51
+nam,11
+nam,7
+nguyen van hoai nam,4
