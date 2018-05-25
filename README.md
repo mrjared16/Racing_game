@@ -22,3 +22,6 @@
     + Tỉ lệ ra vật cản.
     + Biên độ dao động của vật cản.
     + Tỉ lệ dao động của vật cản.
+  - Sửa tên hàm, tên biến
+  - Sửa giao diện
+  - Thêm âm thanh
