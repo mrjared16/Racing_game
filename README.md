@@ -1,4 +1,4 @@
 # Racing_game
 Introduction Programming Techniques Project 
 
-An simple game for our homework.
+An simple C++ game for our homework.
